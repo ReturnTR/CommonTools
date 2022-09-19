@@ -2,7 +2,7 @@ import json
 
 def save_json(data,filename):
     """将数据保存在json文件中"""
-    data = json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '), ensure_ascii=False)
+    data = json.dumps(data, sort_keys=False, indent=4, separators=(',', ': '), ensure_ascii=False)
     with open(filename, 'w', encoding='utf-8') as file:
         file.write(data)
 
