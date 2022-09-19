@@ -24,7 +24,7 @@ def count_list(l,reverse=True):
     """
     res=dict()
     for i in l:res[i]=res.setdefault(i,0)+1
-    sort_dict(res,use_key="False",reverse=reverse)
+    sort_dict(res,reverse=reverse)
     return res
 
 def avg_list(l):
@@ -55,3 +55,17 @@ def cut_data(data,rate="default"):
         cutted_data+=(data[amount[i]:amount[i+1]],)
 
     return cutted_data
+
+class DictCount():
+
+    def __init__(self):
+        self.infobox=dict()
+    def add(self,item):
+
+        if item in self.infobox:
+            self.infobox[item]+=1
+        else:
+            self.infobox[item]=1
+    def get(self):
+        self.infobox=sort_dict(self.infobox)
+        return self.infobox

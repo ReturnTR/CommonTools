@@ -1,5 +1,5 @@
 import pandas as pd
-
+import numpy as np
 
 def data2excel(data, des_file, columns=[]):
     """
@@ -25,3 +25,26 @@ def data2excel(data, des_file, columns=[]):
 
     df = pd.DataFrame(data, columns=columns)
     df.to_excel(des_file, index=False)
+
+def load_excel(filename,sheet_name):
+    data=pd.read_excel(filename,sheet_name=sheet_name).values
+    for i in range(len(data)):
+        for j in range(len(data[i])):
+            if isinstance(data[i][j],float):
+                if np.isnan(data[i][j]):data[i][j]=None
+
+    return data
+
+
+class Tool:
+    def __init__(self,filename,sheet):
+        # 不加sheet默认打开第一个sheet
+        self.data= pd.read_excel(filename,sheet_name=sheet)
+        print(self.data.values)
+    def get_info(self):
+        return self.data.values
+    def get_columns(self,index1=0,index2=0):pass
+
+
+
+
