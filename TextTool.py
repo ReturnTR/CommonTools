@@ -20,7 +20,7 @@ class ConvertInterface:
 class GetPartialOnly:
 
     @staticmethod
-    def chinese(s):
+    def Chinese(s):
         """中文字符,不包含数字"""
         return re.sub(r'[^\u4e00-\u9fa5]+', '', s)
 
@@ -34,6 +34,13 @@ class GetPartialOnly:
         """只保留英文字符"""
         return re.sub(r'[^a-zA-z]+', '', s)
 
+    @staticmethod
+    def Chinese_and_numbers(s):
+        return re.sub(r'[^\u4e00-\u9fa51234567890]+', '', s)
+
+    @staticmethod
+    def numbers(s):
+        return re.sub(r'[^1234567890]+', '', s)
 
 class ConvertB2Q(ConvertInterface):
     """板件转全角"""
