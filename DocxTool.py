@@ -1,7 +1,7 @@
 from docx import Document
 from lxml import etree
 
-# 不同文件的命名空间不同，需要修改
+# 不同文件的命名空间不同，需要查阅word里面的xml文件内容进行修改
 w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
 
 def get_xml(filename):
