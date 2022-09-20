@@ -21,3 +21,10 @@ def get_json_index(data_file,des_file,start,end):
     data=load_json(data_file)
     if not isinstance(data,list):raise("json的最外层格式不是list")
     save_json(data[start:end],des_file)
+
+
+def foramt_change(filename):
+    """
+    对特定json文件格式进行修改
+    """
+    pass

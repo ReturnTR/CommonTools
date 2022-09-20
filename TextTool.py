@@ -42,6 +42,10 @@ class GetPartialOnly:
     def numbers(s):
         return re.sub(r'[^1234567890]+', '', s)
 
+    @staticmethod
+    def English_letter_and_underline(s):
+        return re.sub(r'[^a-zA-z_]+', '', s)
+
 class ConvertB2Q(ConvertInterface):
     """板件转全角"""
     @staticmethod
