@@ -23,8 +23,22 @@ def get_json_index(data_file,des_file,start,end):
     save_json(data[start:end],des_file)
 
 
-def foramt_change(filename):
+def foramat_change(filename):
     """
     对特定json文件格式进行修改
     """
     pass
+
+
+def get_infobox_statistics(filename,des_file,infobox_key="infobox"):
+    from .BasicTool import DictCount
+    data=load_json(filename)
+    key_count=DictCount()
+    for item in data:
+        if infobox_key in item:
+            for key in item[infobox_key]:
+                key_count.add(key)
+    key_count=key_count.get()
+
+    save_json(key_count,des_file)
+
