@@ -7,6 +7,7 @@ import re
     保留部分字符串
 """
 
+
 class ConvertInterface:
     """
     字符串转换接口，需要指名A2B是哪一个，一般为最多使用的哪个
@@ -45,6 +46,7 @@ class GetPartialOnly:
     @staticmethod
     def English_letter_and_underline(s):
         return re.sub(r'[^a-zA-z_]+', '', s)
+
 
 class ConvertB2Q(ConvertInterface):
     """板件转全角"""
@@ -94,6 +96,7 @@ class ConvertChineseSimplified():
     def A2B(self,s):return self.a.convert(s)
     def B2A(self, s): return self.b.convert(s)
 
+
 def get_first_pattern(patterns, s):
     """返回模式列表中第一个匹配的模式，没有返回None"""
     if s:
@@ -101,3 +104,10 @@ def get_first_pattern(patterns, s):
             ret = re.search(pattern, s)
             if ret:
                 return ret.group()
+
+
+def del_chars(s,chars=",，、 "):
+    """默认去掉停用词"""
+    for i in chars:
+        s=s.replace(i,"")
+    return s
