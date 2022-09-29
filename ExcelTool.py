@@ -32,7 +32,7 @@ def load_excel(filename,sheet_name):
         for j in range(len(data[i])):
             if isinstance(data[i][j],float):
                 if np.isnan(data[i][j]):data[i][j]=None
-
+    a=1
     return data
 
 
