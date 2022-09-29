@@ -1,4 +1,4 @@
-from JsonTool import *
+from tqdm import tqdm
 
 class FileStream:
     """
@@ -8,9 +8,10 @@ class FileStream:
     @staticmethod
     def json_stream(from_file,to_file,item_fun):
         """item不记录返回空"""
+        from .JsonTool import load_json,save_json
         data=load_json(from_file)
         new_data=[]
-        for item in data:
+        for item in tqdm(data):
             item=item_fun(item)
             if item:new_data.append(item)
         save_json(data,to_file)
@@ -21,9 +22,10 @@ class FileStream:
         每一个item是一个字典
         在字典的特定属性中改变属性值
         """
+        from .JsonTool import load_json, save_json
         data=load_json(from_file)
         new_data=[]
-        for item in data:
+        for item in tqdm(data):
             if attribute in item:item[attribute]=attribute_fun(item[attribute])
             new_data.append(item)
         save_json(data,to_file)
