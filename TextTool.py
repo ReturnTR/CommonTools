@@ -49,7 +49,7 @@ class GetPartialOnly:
 
 
 class ConvertB2Q(ConvertInterface):
-    """板件转全角"""
+    """半角转全角"""
     @staticmethod
     def A2B(ustring,use_num=True):
         """让阿拉伯数字为半角，其余为全角"""
@@ -85,7 +85,7 @@ class ConvertB2Q(ConvertInterface):
         return "".join([Q2B(uchar) for uchar in ustring])
 
 
-class ConvertChineseSimplified():
+class ConvertChineseSimplified(ConvertInterface):
     """
     繁体转简体
     """
