@@ -14,7 +14,7 @@ class FileStream:
         for item in tqdm(data):
             item=item_fun(item)
             if item:new_data.append(item)
-        save_json(data,to_file)
+        save_json(new_data,to_file)
 
     @staticmethod
     def json_stream_key(from_file,to_file,attribute,attribute_fun):
