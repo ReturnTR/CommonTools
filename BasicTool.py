@@ -56,6 +56,25 @@ def cut_data(data,rate="default"):
 
     return cutted_data
 
+def count_dict_list(data):
+    """
+    记录字典列表的数量信息
+    :param data:
+    :return:
+    """
+    res=dict()
+    res["key数量"]=len(data)
+    res["value数量"]=sum([len(i) for i in data.values()])
+    res["平均key占比"]=res["value数量"]/res["key数量"]
+    res["只有一条的key数量"]=sum([1 for i in data.values() if len(i)==1])
+    res["只有一条的key占比"]=int(res["只有一条的key数量"]/res["key数量"]*10000)/10000
+    return res
+
+def print_dict(data):
+    """将字典以换行形式输出"""
+    for key,value in data.items():
+        print(key,":",value)
+
 class DictCount():
 
     def __init__(self):

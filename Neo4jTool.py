@@ -6,7 +6,12 @@ from py2neo import Graph
 import re
 
 class Neo4jDB():
+    """
+    包含所有的cypher语句
+    如何让其方便是一个需要考虑的问题
+    字符串处理应该在这之前，或者新建一个字符串模块，neo4j的字符串与java相同，变量名也相同
 
+    """
     def __init__(self, url, username, password):
         # 连接neo4j数据库，输入地址、用户名、密码
         self.graph = Graph(url, auth=(username, password))  # 用户名和密码
@@ -77,6 +82,8 @@ class Neo4jDB():
 
         pass
 if __name__ == "__main__":
+
+    # 测试
     db = Neo4jDB(url='http://localhost:7474', username="neo4j", password="zyliu")
 
     item = {'category': ['[[Category:博茨瓦纳行政区划]]'], 'name': '博茨瓦纳行政区划', 'para': '==参见==\n*[[ISO 3166-2:BW]]\n', 'summary': ' \n博茨瓦纳行政区划\n[[波札那]]分为10个行政区（districts）区下再设28个分区（subdistricts）： \n*1.[中部区]（Central District）\n*2.[[杭济区]]（Ghanzi District\n*3.[[卡拉哈迪区]]（Kgalagadi District）\n*4.[[卡特伦区]]（Kgatleng District）\n*5.[[奎嫩区]]（Kweneng District）\n*6.[东北区]（North-East District）\n*7.[西北区]（North-West District）\n*8.[东南区]（South-East District）\n*9.[南部区]（Southern District）\n*10.[[乔贝区]]（Chobe District）\n'}

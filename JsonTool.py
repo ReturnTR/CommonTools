@@ -6,6 +6,19 @@ def save_json(data,filename):
     with open(filename, 'w', encoding='utf-8') as file:
         file.write(data)
 
+def save_json_list_in_line(data,filename):
+    """将数据保存在json文件中"""
+
+    def _remove_return(matched):
+        """去掉换行"""
+        s=matched.group()
+        return s.replace("\n","")
+    import re
+    data = json.dumps(data, sort_keys=False, indent=0, separators=(',', ': '), ensure_ascii=False)
+    data=re.sub(r'\[[\s\S]*?\]',_remove_return,data)
+    with open(filename, 'w', encoding='utf-8') as file:
+        file.write(data)
+
 def load_json(filename):
     """读取json文件"""
     file = open(filename, 'r', encoding='utf-8')
