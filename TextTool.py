@@ -47,6 +47,11 @@ class GetPartialOnly:
     def English_letter_and_underline(s):
         return re.sub(r'[^a-zA-z_]+', '', s)
 
+    @staticmethod
+    def Chinese_and_others(self,s,others):
+        """只接受单个字符串"""
+        return re.sub(r'[^\u4e00-\u9fa{}]+'.format(others), '', s)
+
 
 class ConvertB2Q(ConvertInterface):
     """半角转全角"""
@@ -87,7 +92,7 @@ class ConvertB2Q(ConvertInterface):
 
 class ConvertChineseSimplified(ConvertInterface):
     """
-    繁体转简体
+    A2B : 繁体转简体
     """
     def __init__(self):
         from opencc import OpenCC

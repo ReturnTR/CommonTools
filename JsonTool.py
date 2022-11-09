@@ -1,8 +1,20 @@
 import json
+import re
+def save_json(data,filename,list_in_line=True):
+    """
+    将数据保存在json文件中
+    :param:list_in_line 列表数据以一行表示,不再换行，注：只将最内部的列表变成一行
+    """
 
-def save_json(data,filename):
-    """将数据保存在json文件中"""
+    def remove_return(matched):
+        """去掉换行"""
+        s=matched.group()
+        return s.replace("\n","").replace("    ","")
+
     data = json.dumps(data, sort_keys=False, indent=4, separators=(',', ': '), ensure_ascii=False)
+    if list_in_line:
+        data = re.sub(r'\[[^\]\[]*?\]', remove_return, data)
+
     with open(filename, 'w', encoding='utf-8') as file:
         file.write(data)
 
@@ -15,7 +27,7 @@ def save_json_list_in_line(data,filename):
         return s.replace("\n","")
     import re
     data = json.dumps(data, sort_keys=False, indent=0, separators=(',', ': '), ensure_ascii=False)
-    data=re.sub(r'\[[\s\S]*?\]',_remove_return,data)
+    data=re.sub(r'\[[^\]\[]*?\]',_remove_return,data)
     with open(filename, 'w', encoding='utf-8') as file:
         file.write(data)
 
@@ -36,7 +48,7 @@ def get_json_index(data_file,des_file,start,end):
     save_json(data[start:end],des_file)
 
 
-def foramat_change(filename):
+def format_change(filename):
     """
     对特定json文件格式进行修改
     """

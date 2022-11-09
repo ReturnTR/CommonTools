@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-def data2excel(data, des_file, columns=[]):
+def save_excel(data, des_file, columns=[]):
     """
     将数据有格式的保存在excel中
     默认格式为二维列表（最终都要转化成二维列表）
@@ -26,7 +26,7 @@ def data2excel(data, des_file, columns=[]):
     df = pd.DataFrame(data, columns=columns)
     df.to_excel(des_file, index=False)
 
-def load_excel(filename,sheet_name):
+def load_excel(filename,sheet_name="Sheet1"):
     data=pd.read_excel(filename,sheet_name=sheet_name).values
     for i in range(len(data)):
         for j in range(len(data[i])):
