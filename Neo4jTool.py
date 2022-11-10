@@ -84,6 +84,7 @@ class Neo4jDB():
         node.update(pairs)
         return node
 
+
     def search_node_by_name(self,label,name):
         """寻找特定标签和特定name属性的节点"""
         return self.copy_node(NodeMatcher(self.graph).match(label, name=name).first())
