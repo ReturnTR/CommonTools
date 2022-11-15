@@ -19,6 +19,13 @@ class Draw():
         self.save_dir=save_dir    # 图片保存地址，默认不保存
         self.is_show=is_show   # 是否显示出来
 
+
+    def configure(self,**kwargs):
+        """设置全局属性"""
+        if "use_color" in kwargs:self.use_color=kwargs["use_color"]
+        if "save_dir" in kwargs: self.save_dir = kwargs["save_dir"]
+        if "is_show" in kwargs: self.is_show = kwargs["is_show"]
+
     def process_list_two_data(self,data):
         """处理n×2类型的数据"""
         if isinstance(data,dict):
@@ -27,13 +34,6 @@ class Draw():
             return [i[0]for i in data],[i[1]for i in data]
         else:
             print("process_list_two_data：类型非法！")
-
-
-    def configure(self,**kwargs):
-        """设置全局属性"""
-        if "use_color" in kwargs:self.use_color=kwargs["use_color"]
-        if "save_dir" in kwargs: self.use_color = kwargs["save_dir"]
-        if "is_show" in kwargs: self.use_color = kwargs["is_show"]
 
     def do(self):
         """图像设置好之后的操作"""

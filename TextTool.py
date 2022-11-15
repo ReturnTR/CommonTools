@@ -116,3 +116,56 @@ def del_chars(s,chars=",，、 "):
     for i in chars:
         s=s.replace(i,"")
     return s
+
+
+
+def get_first_envelope_str(s,sep):
+    """
+    对其依照分隔符进行分层,保存里面还有同样分隔符的情况
+    分隔符用'*'分割起来
+    从开头开始匹配，找到一个完整的包络情况
+    找不到返回None
+    正则表达式做不了，只能另写函数
+    
+
+    例：
+    分隔符：{{*}}  左:'{{'  右:'}}'
+    字符串：{{infobox {{USA}}}}{{hehe}}
+    返回  ：{{infobox {{USA}}}}
+
+
+    通常方式是先re一个字符串（{{xx[\s\S]*}}），然后再使用此方法将后面的无用信息去掉
+
+    """
+    sep=sep.split("*")
+    len_left=len(sep[0])
+    len_right=len(sep[1])
+    count=0 #记录有多少个层
+    flag=False #表示是否找到了标签
+    i=0
+    while i<len(s):
+        if s[i:i+len_left]==sep[0]:
+            count+=1
+            flag=True
+            i+=len_left
+        elif s[i:i+len_right]==sep[1]:
+            count-=1
+            if flag and count==0:
+                return s[:i+len_right]
+            else:
+                i+=len_right
+        else:
+            i+=1
+
+if __name__=="__main__":
+    res=get_first_envelope_str("{{infobox {{USA}}{{hehe}}}}","{{*}}")
+    print(res)
+
+
+
+
+
+
+
+
+
