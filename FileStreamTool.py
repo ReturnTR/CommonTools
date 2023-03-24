@@ -1,76 +1,10 @@
 from tqdm import tqdm
 
 
-from multiprocessing import  Process,Queue,Pool
+from multiprocessing import Pool
 
-def multiprocess_data(data,fun,process_num=1):
-    """
-    fun: 单项处理函数
-    data: 列表，处理的数据
-    process_num: 进程数量
-    return : 有序返回，处理函数为空的情况删除
-    """
-    def cut_data(data,num):
-        """平均将data切分成num个，返回二维列表"""
-        new_data=[]
-        one_data_len=round(len(data)/num)
-        for i in range(num):
-            if i==num-1:
-                new_data.append(data[i*one_data_len:])
-            else:
-                new_data.append(data[i*one_data_len:(i+1)*one_data_len])
-        return new_data
-    
-    def process_fun(data,q,bar_q):
-        """把空的地方去掉"""
-        new_data=[]
-        for item in data:
-            item=fun(item)
-            if item is not None:new_data.append(item)
-            bar_q.put(0)
-        q.put(new_data)
-        
-    def pbar_process(bar_q):
 
-        pbar=tqdm(total=len(data))
-        while True:
-            bar_q.get()
-            pbar.update(1)
 
-    bar_q=Queue()
-    pbar_p=Process(target=pbar_process,args=(bar_q,))
-    pbar_p.start()
-
-    if process_num==1:
-        data=[fun(i) for i in data]
-        data=[i for i in data if i is not None]
-        return data
-    
-    data=cut_data(data,process_num)
-    queues=[]
-    processes=[]
-
-    for data_i in data:
-        q=Queue()
-        p=Process(target=process_fun,args=(data_i,q,bar_q))
-        processes.append(p)
-        queues.append(q)
-        p.start()
-    
-
-    new_data=[]
-    for i in range(len(processes)):
-        new_data+=queues[i].get()
-        processes[i].join()
-    
-    pbar_p.terminate()
-    pbar_p.join()
-    
-    return new_data
-
-def multiprocess_data_pool(data,fun,process_num=1):
-    with Pool(processes = process_num) as pool:result = list(tqdm(pool.imap(fun, data), total=len(data)))
-    return result
 
 class FileStream:
     """
@@ -79,31 +13,38 @@ class FileStream:
 
     最好能打印读取和保存信息
     """
+    @staticmethod
+    def multiprocess_data(data,fun,process_num):
+        """使用多进程加速数据处理"""
+        with Pool(processes = process_num) as pool:result = list(tqdm(pool.imap(fun, data), total=len(data)))
+        return result
 
-
-    def __init__(self,from_file,to_file,item_fun,process_num=1):
+    def __init__(self,from_file,to_file,item_fun,num_workers=1):
         """
         from_file : 原文件
         to_file : 处理后的文件
         item_fun : 对文件里每一项的处理函数
+        num_workers : 进程数量，默认单进程
         """
         self.from_file=from_file
         self.to_file=to_file
         self.item_fun=item_fun
-        self.process_num=process_num
+        self.num_workers=num_workers
 
     def json_stream(self,list_in_line=True):
         """item不记录返回空"""
         from .JsonTool import load_json,save_json
         data=load_json(self.from_file)
 
-        new_data=multiprocess_data_pool(data,self.item_fun,self.process_num)
+        if self.num_workers==1:
+            new_data=[]
+            for item in tqdm(data):
+                item=self.item_fun(item)
+                if item:new_data.append(item)
+        else:
+            new_data=self.multiprocess_data(data,self.item_fun,self.num_workers)
+            new_data=[i for i in new_data if i is not None]
 
-
-        # new_data=[]
-        # for item in tqdm(data):
-        #     item=self.item_fun(item)
-        #     if item:new_data.append(item)
         print(len(new_data))
         save_json(new_data,self.to_file,list_in_line=list_in_line)
 
