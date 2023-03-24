@@ -51,6 +51,37 @@ class GetPartialOnly:
     def Chinese_and_others(self,s,others):
         """只接受单个字符串"""
         return re.sub(r'[^\u4e00-\u9fa{}]+'.format(others), '', s)
+    
+    @staticmethod
+    def get_bihuan(s,note):
+        """
+        获取第一个闭环字符串
+        从第一个字符开始计算
+        建议先用正则表达式，否则可能出bug
+        例：
+            s="(sasd(sad)(dsada))dqda"
+            note=["(",")"]
+            return "(sasd(sad)(dsada))"
+        """
+        start=0
+        flag=0
+        bihuan=0
+        i=0
+        while i<len(s):
+            if s[i:i+len(note[0])]==note[0]:
+                if flag==0:
+                    flag=1
+                    start=i
+                bihuan+=1
+                i+=len(note[0])
+            elif s[i:i+len(note[1])]==note[1]:
+                bihuan-=1
+                i+=len(note[1])
+            else:
+                i+=1
+            if bihuan==0 and flag==1:
+                return s[start:i]
+        return ""
 
 
 class ConvertB2Q(ConvertInterface):

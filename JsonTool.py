@@ -64,8 +64,14 @@ def get_infobox_statistics(filename,des_file,infobox_key="infobox"):
             for key in item[infobox_key]:
                 key_count.add(key)
     key_count=key_count.get()
-
+    all_count=sum(key_count.values())
+    temp_count=0
     for item in key_count:
-        key_count[item]=str(int(key_count[item]/len(data)*10000)/100)+"%"+"("+str(key_count[item])+")"
+        temp_count+=key_count[item]
+        res=[]
+        res.append(int(key_count[item]/len(data)*10000)/100)
+        res.append(key_count[item])
+        res.append(int(temp_count/all_count*10000)/100)
+        key_count[item]=res
     save_json(key_count,des_file)
 
