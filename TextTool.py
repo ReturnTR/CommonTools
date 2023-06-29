@@ -188,6 +188,26 @@ def get_first_envelope_str(s,sep):
         else:
             i+=1
 
+
+def get_pattern_info(pattern,content,is_file=True):
+    """获取正则表达式结果
+    
+    :param
+        is_file: content是否为文件，若是读取conent全部内容
+    :return
+        list
+    
+    """
+    if is_file:
+        f=open(content,'r',encoding='utf-8')
+        data=f.read()
+        f.close()
+    else:
+        data=content
+    
+    return re.findall(pattern,data)
+
+
 if __name__=="__main__":
     res=get_first_envelope_str("{{infobox {{USA}}{{hehe}}}}","{{*}}")
     print(res)
