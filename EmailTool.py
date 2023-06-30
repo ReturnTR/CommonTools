@@ -66,16 +66,15 @@ class SendEmail:
         """设置主题，即标题"""
         self.message["Subject"]=subject
 
-    def add_file(self,filename):
-        """添加文件，可多次添加"""
-        attach_file_str = MIMEApplication(open(filename, 'rb',encoding='utf-8').read())
-        attach_file_str.add_header('Content-Disposition', 'attachment', filename=filename.split("/")[-1])
-        self.message.attach(attach_file_str)
-
     def send(self):
         #注册内容
         if not self.email_info["content"]:print("没有填写邮件内容！");exit()
         self.message.attach(MIMEText(self.email_info["content"], _subtype='plain', _charset='utf-8'))
+        #注册文件
+        for filename in email_log_file:
+            attach_file_str = MIMEApplication(open(filename, 'rb').read())
+            attach_file_str.add_header('Content-Disposition', 'attachment', filename=filename.split("/")[-1])
+            self.message.attach(attach_file_str)
         #服务连接
         server=smtplib.SMTP()
         server.connect(self.email_info["email_host"])
