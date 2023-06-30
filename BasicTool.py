@@ -89,11 +89,3 @@ class DictCount():
         self.infobox=sort_dict(self.infobox)
         return self.infobox
 
-class Timer():
-    def start(self):
-        import time
-        self.a=time.time()
-
-    def end(self):
-        import time
-        return int((time.time()-self.a)*100)/100
