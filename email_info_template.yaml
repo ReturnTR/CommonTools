@@ -1,0 +1,18 @@
+#发送邮箱，必填
+send_user: "1828063640@qq.com"
+#发送名称，必填
+send_user_name: "LZY"
+#邮箱服务器地址，必填
+email_host: "smtp.qq.com"
+#邮箱授权码，必填
+password: "gfugiygbmlrnbchd"
+#接收邮箱，必填
+receive_user: ["1293476685@qq.com"]
+#抄送邮箱，可选，默认为[]
+copy_user: ["20215227059@stu.suda.edu.cn"]
+#邮件主题，必填
+subject: "主题"
+#附件，表示文件地址，可选，默认为[]
+attach_file: []
+#邮件内容，可选，默认为 ""
+content: ""

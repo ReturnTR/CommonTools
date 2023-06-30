@@ -205,7 +205,9 @@ def get_pattern_info(pattern,content,is_file=True):
     else:
         data=content
     
-    return re.findall(pattern,data)
+    pattern=re.findall(pattern,data)
+    print(len(pattern))
+    return pattern
 
 
 if __name__=="__main__":

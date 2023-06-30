@@ -91,10 +91,11 @@ def sum_gpt_results(save_dirs,output_filename,file_num=12):
     for save_dir in save_dirs:
         if os.path.exists(save_dir):
             for i in range(file_num):
-                temp_file=save_dir+"/result_"+str(i)+".jsonl"
+                temp_file=save_dir+"/result_"+str(i)+".json"
                 if os.path.exists(temp_file):
                     data+=load_json(temp_file)
-    
+                elif os.path.exists(temp_file+"l"):
+                    data+=load_jsonl(temp_file+"l")
     save_json(data,output_filename)
 
 
