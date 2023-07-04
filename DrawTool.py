@@ -74,6 +74,19 @@ class Draw():
         self.do()
 
 
+    def distribution_bar(self,data):
+        """区间分布柱状图，描述连续数据的分布情况
+        """
+
+        # 画直方图
+        plt.hist(data, bins=30)
+
+        # 设置图形标题和坐标轴标签
+        plt.title('随机数据的直方图')
+        plt.xlabel('数据值')
+        plt.ylabel('数量')
+        self.do()
+
 
 if __name__ == "__main__":
     draw=Draw()

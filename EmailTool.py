@@ -105,6 +105,16 @@ def excepthook(exc_type, exc_value, exc_traceback):
     sen.send()
 sys.excepthook = excepthook
 
+
+def test_email(): 
+    from CommonTools import EmailTool
+    EmailTool.exit_info="main.py"  #不能描述别的程序的错误
+    EmailTool.error_prefix_info="baocuo"
+    EmailTool.email_log_file=["generation_16125_1/result_0.json"]
+    time.sleep(2)
+    a=1+"1"
+
+
 if __name__ == '__main__':
     content="hehe"
     sen=SendEmail(email_config_file)

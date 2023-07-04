@@ -1,4 +1,9 @@
 import re
+from tqdm import tqdm
+from .BasicTool import DictCount
+from .JsonTool import load_json,save_json
+
+
 """
 处理文本的基本工具
 基本操作类别：
@@ -208,6 +213,108 @@ def get_pattern_info(pattern,content,is_file=True):
     pattern=re.findall(pattern,data)
     print(len(pattern))
     return pattern
+
+
+
+
+def get_words_distribution(sentences,save_filename,segmentation_tool="jieba"):
+    """获取词语的分布
+    
+    :param
+        sentences: 句子列表
+
+    首先需要分词，因此需要选择分词工具
+    
+    """
+    if segmentation_tool=="jieba":
+        from .JiebaTool import cut
+        
+    words_count=DictCount()
+
+    for sentence in tqdm(sentences):
+        for word in cut(sentence):words_count.add(word)
+        
+    save_json(words_count.get(),save_filename)
+
+
+
+
+def summary_evaluation(data,save_filename,stop_words_filename="CommonTools/stop_words/hlt_stopwords.json",):
+    """简写评测方法
+
+    以短句为中心，即用（，｜。）分割
+
+    对每个句子建立指标：
+        中心思想：分割，然后看分割的单元在不在里面
+        分割方式：
+            n-gram
+            分词方式
+        对于一些词不需要分析，即停用词
+
+    :param
+        data: 字典列表，字典包含两个键，content表示原文内容，summaries表示总结列表
+        stop_words_filename: 停用词表文件，json格式   
+    
+    :return
+        各种指标，包括：
+        每句的存在率
+        data里每个item存在率
+    """
+
+    from .JiebaTool import cut
+    # from .DrawTool import Draw
+    stop_words=set(load_json(stop_words_filename))
+
+    def get_seg_rate(sentences,content):
+        """分词指标
+        先对句子分词，然后看里面的存在率
+        """
+        summary_rate=(0,0)
+        for sentence in sentences:
+            sentence_list=cut(sentence)
+            sentence_list=[i for i in sentence_list if i not in stop_words]    # 去掉停用词    
+            exist_sentence_list=[i for i in sentence_list if i in content]
+            summary_rate = tuple(x + y for x, y in zip(summary_rate, (len(exist_sentence_list),len(sentence_list))))
+        return summary_rate
+    
+
+    res=[]
+
+    for item in tqdm(data):
+        item_res=[]
+        whole_small_sen_num=0
+        whole_seg_rate=(0,0)
+        for sentence in item["summaries"]:
+            # 切分成短句
+            small_sentences= re.split(",|，|。",sentence)
+            # 短句数量作为指标的分母
+            small_sentence_num=len(small_sentences)
+            
+            # 短句的总结率作为分子，总结率以(分子，分母)的形式给出，便于累积计算
+
+            # 分词
+            seg_rate=get_seg_rate(small_sentences,item["content"])
+
+            # 1-gram
+
+            # 2-gram
+
+            # 3—gram
+            
+            # 求和并记录
+            whole_small_sen_num+=small_sentence_num
+            whole_seg_rate = tuple(x + y for x, y in zip(whole_seg_rate, seg_rate))
+            item_res.append(["small_sen_num",small_sentence_num,"seg_rate",seg_rate[0],seg_rate[1]])
+        item_res.append(["whole_small_sen_num",whole_small_sen_num,"whole_seg_rate",whole_seg_rate[0],whole_seg_rate[1]])
+        res.append(item_res)
+
+
+    
+    save_json(res,save_filename,list_in_line=True)
+    
+    # draw=Draw()
+    # draw.configure()
+    # draw.distribution_bar([i[-1][-2]/i[-1][-1] for i in res])
 
 
 if __name__=="__main__":

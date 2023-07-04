@@ -79,12 +79,14 @@ class DictCount():
 
     def __init__(self):
         self.infobox=dict()
+        self.attribute_set=set()
     def add(self,item):
 
-        if item in self.infobox:
+        if item in self.attribute_set:
             self.infobox[item]+=1
         else:
             self.infobox[item]=1
+            self.attribute_set.add(item)
     def get(self):
         self.infobox=sort_dict(self.infobox)
         return self.infobox

@@ -183,4 +183,15 @@ def a_jsonl_data(data,filename,batch=False):
         f.write(json.dumps(data,ensure_ascii=False)+"\n")
 
     f.close()
-            
+
+
+
+####################
+
+"""
+txt2json
+"""
+def txt2json(filename,save_filename):
+    """按行转换，最后生成json列表的形式"""
+    with open(filename,'r',encoding='utf-8')as f:
+        save_json(f.readlines(),save_filename)

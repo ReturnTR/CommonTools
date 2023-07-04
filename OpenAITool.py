@@ -86,6 +86,10 @@ def sum_gpt_results(save_dirs,output_filename,file_num=12):
         file_num: 每个文件夹中的文件数量，对应ChatGPT_multiprocess中的process_num*2
     
     """
+
+    def del_None_generate(data):
+        return [i for i in data if i["generation"] is not None]
+
     data=[]
 
     for save_dir in save_dirs:
@@ -93,9 +97,9 @@ def sum_gpt_results(save_dirs,output_filename,file_num=12):
             for i in range(file_num):
                 temp_file=save_dir+"/result_"+str(i)+".json"
                 if os.path.exists(temp_file):
-                    data+=load_json(temp_file)
+                    data+=del_None_generate(load_json(temp_file))
                 elif os.path.exists(temp_file+"l"):
-                    data+=load_jsonl(temp_file+"l")
+                    data+=del_None_generate(load_jsonl(temp_file+"l"))
     save_json(data,output_filename)
 
 
