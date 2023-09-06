@@ -36,8 +36,7 @@ def get_create_from_prompt(prompt):
 
 
 def get_prompt_fun(data):
-    """Prompt生成方法，需要在data给出保存文件地址，这样可以并行操作
-    """
+    """Prompt生成方法，需要在data给出保存文件地址，这样可以并行操作"""
     save_file,prompt=data
     res=get_create_from_prompt(prompt)
     a_jsonl_data({"prompt":prompt,"generation":res},save_file)  # 直接在文件中追加
