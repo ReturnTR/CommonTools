@@ -91,3 +91,18 @@ class DictCount():
         self.infobox=sort_dict(self.infobox)
         return self.infobox
 
+def head_file(filename,n):
+    """查看文件前n行"""
+    res=[]
+    with open(filename,'r',encoding='utf-8')as f:
+        for _ in range(n):res.append(f.readline())
+    return res
+
+def tail_file(file_path, n=10):
+    """查看文件末尾n行"""
+    from collections import deque
+    with open(file_path, 'r',encoding='utf-8') as f:
+        # 将文件的每一行读入队列中
+        q = deque(f, n)
+    # 输出队列中剩余的元素
+    return [line for line in q]
