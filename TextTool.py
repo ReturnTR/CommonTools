@@ -239,7 +239,7 @@ def get_words_distribution(sentences,save_filename,segmentation_tool="jieba"):
 
 
 
-def summary_evaluation(data,save_filename,stop_words_filename="CommonTools/stop_words/hlt_stopwords.json",):
+def summary_evaluation(data,save_filename,stop_words_filename="CommonTools/stop_words/hlt_stopwords.json",rate_mode="seg"):
     """简写评测方法
 
     以短句为中心，即用（，｜。）分割
@@ -249,7 +249,7 @@ def summary_evaluation(data,save_filename,stop_words_filename="CommonTools/stop_
         分割方式：
             n-gram
             分词方式
-        对于一些词不需要分析，即停用词
+        对于一些词不需要分析，即停用词，直接删除即可
 
     :param
         data: 字典列表，字典包含两个键，content表示原文内容，summaries表示总结列表
@@ -277,13 +277,20 @@ def summary_evaluation(data,save_filename,stop_words_filename="CommonTools/stop_
             summary_rate = tuple(x + y for x, y in zip(summary_rate, (len(exist_sentence_list),len(sentence_list))))
         return summary_rate
     
-
+    def get_1_gram_rate(sentences,content):
+        summary_rate=(0,0)
+        for sentence in sentences:
+            sentence_list=list(sentence)
+            sentence_list=[i for i in sentence_list if i not in stop_words]    # 去掉停用词    
+            exist_sentence_list=[i for i in sentence_list if i in content]
+            summary_rate = tuple(x + y for x, y in zip(summary_rate, (len(exist_sentence_list),len(sentence_list))))
+        return summary_rate
     res=[]
 
     for item in tqdm(data):
         item_res=[]
         whole_small_sen_num=0
-        whole_seg_rate=(0,0)
+        whole_rate=(0,0)
         for sentence in item["summaries"]:
             # 切分成短句
             small_sentences= re.split(",|，|。",sentence)
@@ -292,29 +299,22 @@ def summary_evaluation(data,save_filename,stop_words_filename="CommonTools/stop_
             
             # 短句的总结率作为分子，总结率以(分子，分母)的形式给出，便于累积计算
 
-            # 分词
-            seg_rate=get_seg_rate(small_sentences,item["content"])
-
-            # 1-gram
-
-            # 2-gram
-
-            # 3—gram
+            if rate_mode=="seg": # 分词
+                rate=get_seg_rate(small_sentences,item["content"])
+            elif rate_mode=="1_gram": # 1-gram
+                rate=get_1_gram_rate(small_sentences,item["content"])
+            else:
+                print("未找到识别模式，评测退出！")
+                return 
             
             # 求和并记录
             whole_small_sen_num+=small_sentence_num
-            whole_seg_rate = tuple(x + y for x, y in zip(whole_seg_rate, seg_rate))
-            item_res.append(["small_sen_num",small_sentence_num,"seg_rate",seg_rate[0],seg_rate[1]])
-        item_res.append(["whole_small_sen_num",whole_small_sen_num,"whole_seg_rate",whole_seg_rate[0],whole_seg_rate[1]])
+            whole_rate = tuple(x + y for x, y in zip(whole_rate, rate))
+            item_res.append(["small_sen_num",small_sentence_num,"seg_rate",rate[0],rate[1]])
+        item_res.append(["whole_small_sen_num",whole_small_sen_num,"whole_seg_rate",whole_rate[0],whole_rate[1]])
         res.append(item_res)
-
-
-    
     save_json(res,save_filename,list_in_line=True)
-    
-    # draw=Draw()
-    # draw.configure()
-    # draw.distribution_bar([i[-1][-2]/i[-1][-1] for i in res])
+
 
 
 if __name__=="__main__":
