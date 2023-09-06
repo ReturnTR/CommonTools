@@ -7,10 +7,12 @@ import matplotlib
 class Draw():
 
 
-    def __init__(self,use_color=True,save_dir="",is_show=True):
+    def __init__(self,use_color=True,save_dir="",is_show=True,show_chinese=False):
 
         # 初始化操作
-        matplotlib.rcParams['font.sans-serif'] = ['SimHei']  # 用黑体显示中文
+        
+        if show_chinese:
+            matplotlib.rcParams['font.sans-serif'] = ['SimHei']  # 用黑体显示中文
         matplotlib.rcParams['axes.unicode_minus'] = False  # 正常显示负号
         self.color = ["red", "yellow", "green", "black", "orange", "brown"]  # 彩色原料
 
@@ -19,6 +21,17 @@ class Draw():
         self.save_dir=save_dir    # 图片保存地址，默认不保存
         self.is_show=is_show   # 是否显示出来
 
+    def set_info(info):
+        if "title" in info:
+            plt.title(info["title"])
+        if "xlabel" in info:
+            plt.xlabel(info["xlabel"])
+        if "ylabel" in info:
+            plt.ylabel(info["ylabel"])
+            
+    def set_figsize(self,figsize):
+        # figsize : 元组表示长宽
+        plt.figure(figsize=figsize)
 
     def configure(self,**kwargs):
         """设置全局属性"""
@@ -73,18 +86,15 @@ class Draw():
 
         self.do()
 
+    
 
     def distribution_bar(self,data):
         """区间分布柱状图，描述连续数据的分布情况
         """
 
         # 画直方图
-        plt.hist(data, bins=30)
+        plt.hist(data, bins=50)
 
-        # 设置图形标题和坐标轴标签
-        plt.title('随机数据的直方图')
-        plt.xlabel('数据值')
-        plt.ylabel('数量')
         self.do()
 
 
