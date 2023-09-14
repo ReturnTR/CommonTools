@@ -6,14 +6,13 @@ from tqdm import tqdm
 from multiprocessing import Pool
 
 import openai
-openai.api_key = 'xxx'
-openai.api_base = "xxx"
+# openai.api_key = 'xxx'
+# openai.api_base = "xxx"
 
 from CommonTools.JsonTool import *
 
 
-
-def get_create_from_prompt(prompt):
+def get_gpt_from_prompt(prompt):
     """调用ChatGPT代码，尝试五次失败后退出"""
 
     count = 0
@@ -35,33 +34,34 @@ def get_create_from_prompt(prompt):
             print('error, trace=' + traceback.format_exc())
 
 
-def get_prompt_fun(data):
-    """Prompt生成方法，需要在data给出保存文件地址，这样可以并行操作"""
-    save_file,prompt=data
-    res=get_create_from_prompt(prompt)
-    a_jsonl_data({"prompt":prompt,"generation":res},save_file)  # 直接在文件中追加
-    time.sleep(5)  
-
-
 def multiprocess_data(data,fun,process_num):
     """使用多进程加速数据处理"""
     with Pool(processes = process_num) as pool:result = list(tqdm(pool.imap(fun, data), total=len(data)))
     return result
 
 
-def ChatGPT_multiprocess(filename,save_dir,process_num=6,start_index=0):
+def ChatGPT_multiprocess(filename,save_dir,model_fun=get_gpt_from_prompt,process_num=6,start_index=0):
 
-    """并行处理ChatGPT命令,结果保存在多个文件中，以jsonl形式保存
+    """并行处理prompt接口调用命令,结果保存在多个文件中，以jsonl形式保存
     
     :param
         filename: prompt文件，格式为prompt列表
         save_dir: 保存生成结果的文件目录，会创建n*process_num个文件，用来并行保存
+        model_fun: 选择模型接口
         process_num: 进程个数
         start_index: prompt列表开始数量，由于调用时会卡住，因此需要重新运行，之前的prompt不用在生成了
     """
     
+    def get_prompt_fun(data):
+        """Prompt生成方法，需要在data给出保存文件地址，这样可以并行操作"""
+        save_file,idx,prompt=data
+        res=model_fun(prompt)
+        a_jsonl_data({"id":idx,"prompt":prompt,"generation":res},save_file)  # 直接在文件中追加
+        time.sleep(5)  
+
+
     # 设置文件保存倍数，越大越不容易发生冲突
-    times=2   
+    times=2
 
     # 创建文件夹，并在里面生成 process_num*times 个内容为[]的json文件，序列为0 —— process_num*times-1
     os.makedirs(save_dir, exist_ok=True)
@@ -70,13 +70,13 @@ def ChatGPT_multiprocess(filename,save_dir,process_num=6,start_index=0):
 
     # 为Prompt标注保存文件，从1到process_num*2，用元组方式扩展
     data=load_json(filename)
-    data=[(save_dir+"/result_"+str(i%(process_num*times))+".jsonl",data[i]) for i in range(len(data))]
+    data=[(save_dir+"/result_"+str(i%(process_num*times))+".jsonl",i,data[i]) for i in range(len(data))]
 
     # 执行，可以选择data的开始数量
     multiprocess_data(data[start_index:],get_prompt_fun,process_num)
 
 
-def sum_gpt_results(save_dirs,output_filename,file_num=12):
+def sum_results(save_dirs,output_filename,file_num=12):
     """汇总GPT生成结果
     
     :param
