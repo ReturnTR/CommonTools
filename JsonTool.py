@@ -163,13 +163,13 @@ def load_jsonl(filename):
     """读取json文件"""
     return [item for item in tqdm(JsonlIterator(filename))]
 
-def get_jsonl_indexs(filename,start,end,des_file=None,is_print=True,list_in_line=False):
+def get_jsonl_indexs(filename,start=0,end=None,des_file=None,is_print=True,list_in_line=False):
     """
     截取jsonl文件中的部分内容，并以json格式导出
     相对于json的优点是不用全部导入，节省内存与时间
     :param
-        start:开始索引
-        end: 结束索引
+        start:开始索引,从0开始，默认为0
+        end: 结束索引，最长为n-1，默认为n-1
         des_file: 保存区间地址，默认不保存
         is_print: 是否对区间进行打印，默认不打印
         is_json:  是否以json作为输出结果，否则是jsonl，默认是json
@@ -178,8 +178,12 @@ def get_jsonl_indexs(filename,start,end,des_file=None,is_print=True,list_in_line
     """
     
     with open(filename, 'r', encoding='utf-8')as f:
-        for _ in range(start):f.readline()
-        data=[json.loads(f.readline()) for _ in range(end-start)]
+        for _ in range(start):next(f, None)
+
+        if end is None:
+            data=[json.loads(line) for line in f]
+        else:
+            data=[json.loads(f.readline()) for _ in range(end-start)]
         
     if des_file is not None: save_json(data,des_file)
     
