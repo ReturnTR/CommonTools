@@ -3,7 +3,6 @@
 # Description : pandas 的一些操作，包括csv与excel的数据读取
 
 import pandas as pd
-from .LoggingTool import log
 
 
 
@@ -53,18 +52,25 @@ def load_df(filename,sep="\t",sheet_name="Sheet1"):
     elif filename[-3:]=="csv":
         df=pd.read_csv(filename,sep=sep,nrows=None)
     else:
-        log.ERROR("无法找到已有格式文件："+filename)
+        print("无法找到已有格式文件："+filename)
     return df
 
 
 def save_df(df,filename,sep="\t",sheet_name="Sheet1"):
     
-    if filename[:-4]=="xlsx":
-        df.to_excel(filename, index=False,sheet_name=sheet_name)
-    elif filename[:-3]=="csv":
+    if filename[-4:]=="xlsx":
+        # 多个表的存储
+        if isinstance(df,list):
+            with pd.ExcelWriter(filename) as writer:
+                for i in range(len(df)):
+                    temp_sheet_name = 'Sheet'+str(i) if sheet_name == "Sheet1" else sheet_name[i]
+                    df[i].to_excel(writer, sheet_name=temp_sheet_name)  
+
+        else: df.to_excel(filename, index=False,sheet_name=sheet_name)
+    elif filename[-3:]=="csv":
         df.to_csv(filename, index=False,sep=sep)
     else:
-        log.ERROR("无法找到已有格式文件："+filename)
+        print("无法找到已有格式文件："+filename)
     
     
 if __name__ == "__main__":
