@@ -1,0 +1,91 @@
+
+# 基准地址，后面的地址会以这个为根目录
+basepath: /raid0/liuziyun/hub/baidu/im-as/auction/
+file_operation:
+  - file: auction/common/base/auction_dict.cpp
+    # 在第63行插入文本
+    operations:
+      - line: 63
+        text: char LVYOU_COUNTQ_TRANSFER_DICT[] = "lvyou_countq_transfer_dict";
+  - file: auction/common/base/auction_dict.h
+    operations:
+        # 多行插入
+      - line: 24
+        text: struct U64DictFlt;
+      - line: 185
+        text: extern char LVYOU_COUNTQ_TRANSFER_DICT[];
+      - line: 252
+        text: using LvyouCountqTransferDict = ::MDictZ<::im::ranker::LVYOU_COUNTQ_TRANSFER_DICT, ::im::dict::z::U64DictFlt, true>; 
+  - file: auction/common/base/common_gflags.cpp
+    operations:
+      - line: 960
+        text: 
+          # 同一位置插入多行
+          - "" # 换行
+          - //liuziyun
+          - DEFINE_common_switch(lvyou_countq_dict_transfer);
+  - file: auction/pruning/predict_q_strategy.cpp
+    operations:
+      - line: 11
+        text: '#include "auction/dict_proto/dict_U64DictFlt.dict.h"'
+      - line: 62
+        text: DECLARE_switch(lvyou_countq_dict_transfer);
+      - line: 1408
+        text:
+          - ""
+          - "                        else if (DYNC_ocpc_conv_countq && DYNC_lvyou_countq_dict_transfer){"
+          - "                            find_res = ::im::ranker::dict::LvyouCountqTransferDict::seek(ocpc_lib_info->package_id);"
+          - "                            if (find_res != nullptr){"
+          - "                                countq = find_res->value();"
+          - "                                cvrq = old_cvrq * countq;"
+          - '                                AUCTION_DEBUG_LOG("adv[%lu] packid[%lu] cvrq[%f->%f]",'
+          - "                                    basic_adv.winfo_id(), ocpc_lib_info->package_id, old_cvrq, cvrq);"
+          - "                            }"
+          - "                        }"
+  - file: cts/.base_env/conf/auction/auction_switches.conf
+    operations:
+      - line: 479
+        text: "DYNC_lvyou_countq_dict_transfer : 0"
+  - file: cts/.base_env/conf/auction/xbuiltin_dict.conf
+    operations:
+      - line: 367
+        text:
+          - ""
+          - "[lvyou_countq_transfer_dict]"
+          - filename:./data/pl/a_comm/lvyou_countq_transfer_dict.txt
+  - file: env/test/conf_diff
+    operations:
+      - line: 68
+        text: 
+          - "<lvyou_countq_dict_transfer>"
+          - 'auction/auction_switches.conf -i "DYNC_lvyou_countq_dict_transfer:1"'
+          - 'imas_dict.conf -i "[lvyou_countq_transfer_dict]"'
+          - 'imas_dict.conf -i "lvyou_countq_transfer_dict.filename:./data/pl/a_comm/lvyou_countq_transfer_dict.txt"'
+          - 'auction/xbuiltin_dict.conf -i "[lvyou_countq_transfer_dict]"'
+          - 'auction/xbuiltin_dict.conf -i "lvyou_countq_transfer_dict.filename:./data/pl/a_comm/lvyou_countq_transfer_dict.txt"'
+          - "<lvyou_countq_dict_transfer_nodiff>"
+          - 'auction/auction_switches.conf -u "DYNC_lvyou_countq_dict_transfer:0"'
+          - ""
+          - ""
+      - line: 74
+        text: INCLUDE lvyou_countq_dict_transfer
+      - line: 80
+        text: INCLUDE lvyou_countq_dict_transfer_nodiff
+  - file: env/test/data_diff
+    operations:
+      - line: 1
+        text: 
+          - <lvyou_countq_dict_transfer>
+          - "|data_type=s|key=data-im.baidu.com:/home/work/var/CI_DATA/im/static/lvyou_countq_dict_transfer.txt/lvyou_countq_dict_transfer.txt.1|deploy_name=./data/pl/a_comm/lvyou_countq_dict_transfer.txt|"
+      - line: 3
+        text: INCLUDE lvyou_countq_dict_transfer
+  - file: cts/.base_env/data/pl/a_comm/lvyou_countq_transfer_dict.txt
+    # 创建文件，添加为content
+    content:
+      - "3377978381  1.27974087161"
+      - "100000  1.27974087161\n200000  1.06167400881\n300000  1.14705882353\n400000  1.08898305085\n500000  1.90697674419"
+
+
+
+
+    
